@@ -24,16 +24,18 @@ pipeline {
                 '''
             }
         }
+         stage('Build') {
+            steps {
+                sh '''
+                mvn clean install -DskipTests
+                '''
+            }
+        }
+
         stage('SonarQube Scan') {
             steps {
-                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                    sh '''
-                       sonar-scanner \
-                      -Dsonar.projectKey=My-App \
-                      -Dsonar.sources=. \
-                      -Dsonar.host.url=http://192.168.0.250:9000 \
-                      -Dsonar.login=$SONAR_TOKEN
-                    '''
+                withSonarQubeEnv('sonarqube') {
+                     sh 'mvn clean verify sonar:sonar'
                 }
             }
         }

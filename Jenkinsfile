@@ -1,23 +1,28 @@
-pipeline{
-    agent{
+pipeline {
+    agent {
         label 'Sonar'
     }
+
     environment {
         SONAR_HOST_URL = 'http://192.168.0.250:9000'
         SONAR_TOKEN = credentials('sonar-token')
     }
+
     stages {
-        stage ('SCM Checkout'){
+        stage('SCM Checkout') {
             steps {
                 checkout scm
             }
         }
-        stage('checking the software'){
-            sh '''
-            mvn --version
-            java --version
-            sonar-scanner --version
-            '''
+
+        stage('Checking the software') {
+            steps {
+                sh '''
+                mvn --version
+                java --version
+                sonar-scanner --version
+                '''
+            }
         }
     }
 }
